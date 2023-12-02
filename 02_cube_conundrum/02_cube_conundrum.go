@@ -21,9 +21,14 @@ func Run() {
 		powerSetsSum int = 0
 	)
 
-	fmt.Println("Enter the input(press Ctrl+D on Unix/Linux or Ctrl+Z on Windows to finish):")
+	file, err := os.Open("./02_cube_conundrum/input.txt")
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return
+	}
+	defer file.Close()
 
-	scanner := bufio.NewScanner(os.Stdin)
+	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -69,9 +74,8 @@ func Run() {
 		powerSet = colorMaxCount["red"] * colorMaxCount["green"] * colorMaxCount["blue"]
 
 		powerSetsSum += powerSet
-		fmt.Println("Game: ", gameId, "; Result: ", isValidGame)
 	}
 
-	fmt.Println("Result: ", result)
-	fmt.Println("Power sets sum", powerSetsSum)
+	fmt.Println("Part One - Sum of valid game ids:", result)
+	fmt.Println("Part Two - Sum of power sets:", powerSetsSum)
 }

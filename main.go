@@ -13,7 +13,7 @@ import (
 
 func main() {
 	var problemNumber int
-	packageMapping := map[int]string{
+	problemMapping := map[int]string{
 		1: "Trebuchet",
 		2: "Cube Conundrum",
 	}
@@ -24,12 +24,15 @@ func main() {
 		problemNumber, _ = strconv.Atoi(args[1])
 	} else {
 		reader := bufio.NewReader(os.Stdin)
+		for idx, problem := range problemMapping {
+			fmt.Printf("Day %d - %s\n", idx, problem)
+		}
 		fmt.Print("Which problem to run?[1-2] ")
 		input, _ := reader.ReadString('\n')
 		problemNumber, _ = strconv.Atoi(strings.TrimSpace(input))
 	}
 
-	fmt.Printf("Running the problem: %s\n", packageMapping[problemNumber])
+	fmt.Printf("\nRunning the problem: %s\n", problemMapping[problemNumber])
 
 	switch problemNumber {
 	case 1:

@@ -23,13 +23,19 @@ var digits = map[string]int{
 
 func Run() {
 	var (
-		lines []string
-		sum   int = 0
+		lines             []string
+		sum               int = 0
+		sumIncludingWords int = 0
 	)
 
-	fmt.Println("Enter the input(press Ctrl+D on Unix/Linux or Ctrl+Z on Windows to finish):")
+	file, err := os.Open("./01_trebuchet/input.txt")
 
-	scanner := bufio.NewScanner(os.Stdin)
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return
+	}
+
+	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -37,13 +43,15 @@ func Run() {
 	}
 
 	for _, line := range lines {
-		firstDigit := findFirstDigit(line)
-		lastDigit := findLastDigit(line)
-		fmt.Println(firstDigit, lastDigit)
+		firstDigit, firstDigitIncludingWords := findFirstDigit(line)
+		lastDigit, lastDigitIncludingWords := findLastDigit(line)
+
 		sum += firstDigit*10 + lastDigit
+		sumIncludingWords += firstDigitIncludingWords*10 + lastDigitIncludingWords
 	}
 
-	fmt.Println("Overall sum: ", sum)
+	fmt.Println("Part One - Overall sum(including only digits): ", sum)
+	fmt.Println("Part Two - Overall sum(including digits as words): ", sumIncludingWords)
 }
 
 func findFirstDigitAsWord(str string) (int, int) {
@@ -64,24 +72,21 @@ func findFirstDigitAsWord(str string) (int, int) {
 	return firstDigit, firstIndex
 }
 
-func findFirstDigit(str string) int {
+func findFirstDigit(str string) (int, int) {
+	var firstDigit int = 0
 	var firstDigitAsWord, firstDigitAsWordIndex = findFirstDigitAsWord(str)
-
-	fmt.Println("output of findFirstDigitAsWord", firstDigitAsWord, firstDigitAsWordIndex)
 
 	for idx, ch := range str {
 		if unicode.IsDigit(ch) {
+			firstDigit = int(ch - '0')
 			if idx < firstDigitAsWordIndex {
-				return int(ch - '0')
-			} else {
-				return firstDigitAsWord
+				firstDigitAsWord = firstDigit
 			}
+			break
 		}
 	}
-	if firstDigitAsWord < 10 {
-		return firstDigitAsWord
-	}
-	return 0
+
+	return firstDigit, firstDigitAsWord
 }
 
 func findLastDigitAsWord(str string) (int, int) {
@@ -95,7 +100,6 @@ func findLastDigitAsWord(str string) (int, int) {
 
 		if index > lastIndex {
 			lastIndex = index
-			fmt.Println("Digit found", digitAsWord, digit)
 			lastDigit = digit
 		}
 	}
@@ -103,23 +107,20 @@ func findLastDigitAsWord(str string) (int, int) {
 	return lastDigit, lastIndex
 }
 
-func findLastDigit(str string) int {
+func findLastDigit(str string) (int, int) {
+	var lastDigit int
 	var lastDigitAsWord, lastDigitAsWordIndex = findLastDigitAsWord(str)
-
-	fmt.Println("Output of findLastDigitAsWordIndex", lastDigitAsWord, lastDigitAsWordIndex)
 
 	for i := len(str) - 1; i >= 0; i-- {
 		ch := rune(str[i])
 		if unicode.IsDigit(ch) {
+			lastDigit = int(ch - '0')
 			if i > lastDigitAsWordIndex {
-				return int(ch - '0')
-			} else {
-				return lastDigitAsWord
+				lastDigitAsWord = lastDigit
 			}
+			break
 		}
 	}
-	if lastDigitAsWord > 0 {
-		return lastDigitAsWord
-	}
-	return 0
+
+	return lastDigit, lastDigitAsWord
 }
